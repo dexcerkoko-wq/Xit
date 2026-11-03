@@ -1,0 +1,35 @@
+databases:
+  - name: keyauth-db
+    plan: basic-256mb
+    region: ohio
+    databaseName: keyauth
+    user: keyauth_user
+
+services:
+  - type: web
+    name: keyauth-api
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: keyauth-db
+          property: connectionString
+      - key: ADMIN_SECRET
+        generateValue: true
+      - key: SUPPORT_URL
+        sync: false
+      - key: UPDATE_URL
+        sync: false
+      - key: WATERMARK_ENABLED
+        value: "false"
+      - key: WATERMARK_POSITION
+        value: top_center
+      - key: WATERMARK_FONT_SIZE
+        value: "24"
